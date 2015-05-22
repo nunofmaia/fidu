@@ -10,16 +10,19 @@ import (
 	"strconv"
 )
 
+// Marker represents the structure of a fiducial marker
 type Marker struct {
-	Code       int
-	Size       int
-	Division   int
-	Block_size int
-	matrix     []int
-	Marker     *image.RGBA
-	Name       string
+	Code      int
+	Size      int
+	Division  int
+	BlockSize int
+	matrix    []int
+	Marker    *image.RGBA
+	Name      string
 }
 
+// New returns a Marker with the given parameters.
+// Using these parameters, it generates the visual representation of the marker
 func New(code, size, division, blocksize int, name string) *Marker {
 
 	if division < 3 || division > 8 {
@@ -66,6 +69,8 @@ func New(code, size, division, blocksize int, name string) *Marker {
 	return fid
 }
 
+// Save saves the fiducial marker into a PNG image.
+// If no name is specified, 'code-<code>.png' will be used as the filename.
 func (m *Marker) Save() error {
 	if m.Name == "" {
 		m.Name = fmt.Sprintf("code-%d.png", m.Code)
@@ -86,26 +91,26 @@ func (m *Marker) Save() error {
 }
 
 func (m *Marker) draw() {
-	codeX := m.Block_size * 2
-	codeY := m.Block_size * 2
+	codeX := m.BlockSize * 2
+	codeY := m.BlockSize * 2
 
 	m.set(0, 0, m.Size, m.Size, color.NRGBA{0, 0, 0, 255})
-	m.set(m.Block_size, m.Block_size, m.Size-m.Block_size, m.Size-m.Block_size, color.NRGBA{255, 255, 255, 255})
-	m.set(m.Block_size*2, m.Block_size*2, m.Size-m.Block_size*2, m.Size-m.Block_size*2, color.NRGBA{0, 0, 0, 255})
+	m.set(m.BlockSize, m.BlockSize, m.Size-m.BlockSize, m.Size-m.BlockSize, color.NRGBA{255, 255, 255, 255})
+	m.set(m.BlockSize*2, m.BlockSize*2, m.Size-m.BlockSize*2, m.Size-m.BlockSize*2, color.NRGBA{0, 0, 0, 255})
 
 	for i, r := 0, 0; i < len(m.matrix); i++ {
 		if m.matrix[i] == 1 {
-			m.set(codeX, codeY, codeX+m.Block_size, codeY+m.Block_size, color.NRGBA{255, 255, 255, 255})
+			m.set(codeX, codeY, codeX+m.BlockSize, codeY+m.BlockSize, color.NRGBA{255, 255, 255, 255})
 		}
 
 		if r == m.Division-1 {
 			r = 0
-			codeY = codeY + m.Block_size
-			codeX = m.Block_size * 2
+			codeY = codeY + m.BlockSize
+			codeX = m.BlockSize * 2
 			continue
 		}
 
-		codeX = codeX + m.Block_size
+		codeX = codeX + m.BlockSize
 		r = r + 1
 	}
 }
