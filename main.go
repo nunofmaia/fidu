@@ -45,7 +45,11 @@ func main() {
 		cli.StringFlag{
 			Name:  "filename, f",
 			Value: "",
-			Usage: "the name of the output file, default 'code-[number].png'.",
+			Usage: "the name of the output file, default 'code-[number].png'",
+		},
+		cli.BoolFlag{
+			Name:  "no-border",
+			Usage: "make the border of the marker transparent",
 		},
 	}
 	app.Action = func(c *cli.Context) {
@@ -54,8 +58,9 @@ func main() {
 		division := c.Int("division")
 		size := c.Int("size")
 		filename := c.String("filename")
+		hasBorder := !c.Bool("no-border")
 
-		mkr := marker.New(code, size, division, blocksize, filename)
+		mkr := marker.New(code, size, division, blocksize, filename, hasBorder)
 		if err := mkr.Save(); err != nil {
 			log.Fatal(err)
 		}

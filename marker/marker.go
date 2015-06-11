@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/draw"
 	"image/png"
 	"log"
 	"os"
@@ -17,13 +18,13 @@ type Marker struct {
 	Division  int
 	BlockSize int
 	matrix    []int
-	Marker    *image.RGBA
+	Marker    *image.NRGBA
 	Name      string
 }
 
 // New returns a Marker with the given parameters.
 // Using these parameters, it generates the visual representation of the marker
-func New(code, size, division, blocksize int, name string) *Marker {
+func New(code, size, division, blocksize int, name string, hasBorder bool) *Marker {
 
 	if division < 3 || division > 8 {
 		log.Fatal("The value of division must range from 3 to 8.")
@@ -55,16 +56,23 @@ func New(code, size, division, blocksize int, name string) *Marker {
 		}
 	}
 
+	m := image.NewNRGBA(image.Rect(0, 0, size, size))
+	if hasBorder {
+		draw.Draw(m, m.Bounds(), image.Black, image.ZP, draw.Src)
+	} else {
+		draw.Draw(m, m.Bounds(), image.Transparent, image.ZP, draw.Src)
+	}
+
 	fid := &Marker{
 		code,
 		size,
 		division,
 		blocksize,
 		matrix,
-		image.NewRGBA(image.Rect(0, 0, size, size)),
+		m,
 		name}
 
-	fid.draw()
+	fid.draw(hasBorder)
 
 	return fid
 }
@@ -90,13 +98,15 @@ func (m *Marker) Save() error {
 	return nil
 }
 
-func (m *Marker) draw() {
+func (m *Marker) draw(hasBorder bool) {
 	codeX := m.BlockSize * 2
 	codeY := m.BlockSize * 2
 
-	m.set(0, 0, m.Size, m.Size, color.NRGBA{0, 0, 0, 255})
-	m.set(m.BlockSize, m.BlockSize, m.Size-m.BlockSize, m.Size-m.BlockSize, color.NRGBA{255, 255, 255, 255})
-	m.set(m.BlockSize*2, m.BlockSize*2, m.Size-m.BlockSize*2, m.Size-m.BlockSize*2, color.NRGBA{0, 0, 0, 255})
+	whiteBlock := image.Rect(m.BlockSize, m.BlockSize, m.Size-m.BlockSize, m.Size-m.BlockSize)
+	blackBlock := image.Rect(m.BlockSize*2, m.BlockSize*2, m.Size-m.BlockSize*2, m.Size-m.BlockSize*2)
+
+	draw.Draw(m.Marker, whiteBlock, image.White, image.ZP, draw.Src)
+	draw.Draw(m.Marker, blackBlock, image.Black, image.ZP, draw.Src)
 
 	for i, r := 0, 0; i < len(m.matrix); i++ {
 		if m.matrix[i] == 1 {
