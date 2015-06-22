@@ -15,13 +15,11 @@ Generate the default fiducial marker using the command:
 ```
 fidu
 ```
-The result is a 288px by 288px PNG image with the representation of the marker.
+The result is a 288x288px PNG image with the representation of the marker.
 
 The user can override the default options, using the same flags that are present in MarkerFactory. For example:
 ```
 fidu --code 20 --division 3 --blocksize 16 --filename code.png
 ```
 
-There is an additional `--size` flag which can be used to define the size, in pixels, of each side of
-the resulting PNG image. However, `--size` and `--division` must comply in order to get an integer value from the
-expression `size = blocksize * (division + 4)`.
+The size of the marker is always expressed by `size = blocksize * (division + 4)`.
