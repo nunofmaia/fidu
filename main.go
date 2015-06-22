@@ -38,7 +38,7 @@ func main() {
 			Usage: "the number of blocks in X/Y directions, range from 3 to 8",
 		},
 		cli.StringFlag{
-			Name:  "filename, f",
+			Name:  "filename, o",
 			Value: "",
 			Usage: "the name of the output file, default 'code-[number].png'",
 		},
