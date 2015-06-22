@@ -24,22 +24,17 @@ type Marker struct {
 
 // New returns a Marker with the given parameters.
 // Using these parameters, it generates the visual representation of the marker
-func New(code, size, division, blocksize int, name string, hasBorder bool) *Marker {
+func New(code, division, blocksize int, name string, hasBorder bool) *Marker {
 
 	if division < 3 || division > 8 {
 		log.Fatal("The value of division must range from 3 to 8.")
 	}
 
-	s := blocksize * (division + 4)
-	if size != s {
-		if (size % (division + 4)) != 0 {
-			log.Fatal("The proportions of the marker are incorrect.")
-		}
-
-		blocksize = size / (division + 4)
-	} else {
-		size = s
+	if blocksize < 16 || blocksize > 32 {
+		log.Fatal("The value of blocksize must range from 16 to 32")
 	}
+
+	size := blocksize * (division + 4)
 
 	matrix := make([]int, division*division)
 	matrix[0] = 1

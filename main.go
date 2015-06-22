@@ -37,11 +37,6 @@ func main() {
 			Value: 5,
 			Usage: "the number of blocks in X/Y directions, range from 3 to 8",
 		},
-		cli.IntFlag{
-			Name:  "size, s",
-			Value: 288,
-			Usage: "the size of the marker in pixels",
-		},
 		cli.StringFlag{
 			Name:  "filename, f",
 			Value: "",
@@ -56,11 +51,10 @@ func main() {
 		code := c.Int("code")
 		blocksize := c.Int("blocksize")
 		division := c.Int("division")
-		size := c.Int("size")
 		filename := c.String("filename")
 		hasBorder := !c.Bool("no-border")
 
-		mkr := marker.New(code, size, division, blocksize, filename, hasBorder)
+		mkr := marker.New(code, division, blocksize, filename, hasBorder)
 		if err := mkr.Save(); err != nil {
 			log.Fatal(err)
 		}
